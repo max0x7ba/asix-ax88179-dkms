@@ -21,7 +21,7 @@
 pkgname="asix-ax88179"
 pkgver="$(git describe --tags 2> /dev/null || echo 'No tag found' >&2)"
 archivename="ASIX_USB_NIC_Linux_Driver_Source_v${pkgver}"
-archiveurl="https://www.asix.com.tw/en/support/download/file/2080"
+archiveurl="https://www.asix.com.tw/en/support/download/file/2150"
 drvname="ax_usb_nic"
 srcdir="/usr/src/${pkgname}-${pkgver}"
 log="/var/lib/dkms/${pkgname}/${pkgver}/build/make.log"
