@@ -36,6 +36,32 @@ Which should report `Driver=ax_usb_nic`:
             ID 0b95:1790 ASIX Electronics Corp. AX88179 Gigabit Ethernet
 ```
 
+6. (Optional step) Enable Ethernet jumbo frames for ASIX AX88179 connections.
+For maximum compatibility with existing network hardware, jumbo frames are not enabled by default in switches/routers or NICs. To make use of jumbo frames, they must be explicitly enabled in your router/switch, and in the network connection settings of the both IP src/dst peers.
+
+AX88179 supports jumbo frames with (IP Maximum Transmission Unit) MTU=9216. In KDE Plasma, enabling Ethernet jumbo frames involves setting MTU=9216 in the "WiFi & Networking -> <connection-name> -> Wired" tab, and reconnecting.
+
+Setting MTU=9216 only _enables_ using larger Ethernet frames. The IP path MTU discovery finds the actual MTU of the particular network path between the IP src/dst peers, and adjusts the MTU down to prevent sending large IP packets that would have to be fragmented somewhere along the path.
+
+To verify whether Ethernet jumbo frames are enabled:
+```
+ip -d addr
+```
+Which should report `mtu 9216` for the IP link, matching `maxmtu 9216` of its Ethernet link, e.g.:
+```
+...
+3: enx6...2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9216 qdisc fq_codel state UP group default qlen 1000
+    link/ether ... brd ... promiscuity 0  allmulti 0 minmtu 68 maxmtu 9216 numtxqueues 1 numrxqueues 1 gso_max_size 16384 gso_max_segs 65535 tso_max_size 16384 tso_max_segs 65535 gro_max_size 65536 parentbus usb parentdev 4-1.4:1.0
+    inet 10.0.0.3/24 brd 10.0.0.255 scope global dynamic noprefixroute enx6...2
+       valid_lft 580108sec preferred_lft 580108sec
+...
+```
+
+In a 2.5Gb/s LAN, with jumbo frames enabled in the router and the peers, the maximum ASIX AX88179 data transfer rate reported by `iperf3 -VNZ --bidir -w8M --dont-fragment -c <server>` is:
+
+* ~933kb/s with the default Ethernet frame MTU=1500,
+* ~950kb/s (+1.8%) with Ethernet jumbo frame MTU=9216.
+
 ## How to uninstall
 
 1. Run the installation program with the uninstall option. If necessary, specify the existing tarball path as its last argument:
